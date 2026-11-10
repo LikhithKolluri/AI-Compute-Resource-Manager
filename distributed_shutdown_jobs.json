@@ -1,0 +1,17 @@
+{
+  "jobs": [
+    {
+      "name": "distributed-shutdown-test",
+      "vram_gb": 4.0,
+      "priority": 2,
+      "preemptible": false,
+      "epochs": 100,
+      "batch_size": 64,
+      "distributed": true,
+      "workers": 2,
+      "samples": 4096,
+      "max_retries": 0,
+      "optimize_batch_size": false
+    }
+  ]
+}

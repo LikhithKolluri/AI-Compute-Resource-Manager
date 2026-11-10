@@ -1,0 +1,12 @@
+{
+  "jobs": [
+    {
+      "name": "different-model-test",
+      "vram_gb": 2,
+      "priority": 1,
+      "workload": "llama-finetuning",
+      "model_version": "llama-v1",
+      "precision": "bf16"
+    }
+  ]
+}

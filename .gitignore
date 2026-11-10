@@ -1,0 +1,26 @@
+
+# Python environment
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Generated outputs
+outputs/
+
+# Test caches
+.pytest_cache/
+.coverage
+
+# Editor settings
+.vscode/
+.idea/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Windows and macOS
+Thumbs.db
+.DS_Store

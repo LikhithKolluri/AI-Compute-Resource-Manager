@@ -1,0 +1,13 @@
+{
+  "jobs": [
+    {
+      "name": "flexible-training",
+      "vram_gb": 7.0,
+      "priority": 2,
+      "preemptible": true,
+      "epochs": 10,
+      "steps": 1000,
+      "batch_size": 512
+    }
+  ]
+}

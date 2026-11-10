@@ -1,0 +1,29 @@
+{
+  "jobs": [
+    {
+      "name": "training-A",
+      "vram_gb": 5.0, 
+      "priority": 2,
+      "epochs": 3,
+      "steps": 100,
+      "batch_size": 256,
+      "optimize_batch_size": true
+    },
+    {
+      "name": "training-B",
+      "vram_gb": 4.0,
+      "priority": 2,
+      "epochs": 5,
+      "steps": 200,
+      "batch_size": 512
+    },
+    {
+      "name": "training-C",
+      "vram_gb": 3.0,
+      "priority": 3,
+      "epochs": 2,
+      "steps": 100,
+      "batch_size": 128
+    }
+  ]
+}
