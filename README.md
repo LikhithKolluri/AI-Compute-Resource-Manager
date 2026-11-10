@@ -52,39 +52,36 @@ The system manages training jobs through a priority-based scheduler, monitors re
 
 ## Architecture
 
-```text
-Job Configuration (JSON)
-          |
-          v
-      Job Loader
-          |
-          v
-    GPU Scheduler
-          |
-          +---- Priority and Capacity Management
-          |
-          +---- Batch-Size Recommendation
-          |
-          v
-    Process Registry
-          |
-          +---- Single-GPU PyTorch Training
-          |
-          +---- Distributed CPU DDP Launcher
-          |              |
-          |              +---- Worker Rank 0
-          |              +---- Worker Rank 1
-          |
-          v
-    Metrics and Reports
-          |
-          v
-    Performance Evaluation
-          |
-          +---- ACCEPTED
-          +---- REJECTED ----> Rollback and Relaunch
-          +---- INCONCLUSIVE
-```
+
+flowchart TD
+    A["Job Configuration (JSON)"] --> B["Job Loader"]
+    B --> C["GPU Scheduler"]
+
+    C --> D["Priority & Capacity Management"]
+    C --> E["Batch-Size Recommendation"]
+    D --> F["Process Registry"]
+    E --> F
+
+    F --> G["Single-GPU PyTorch Training"]
+    F --> H["Distributed CPU DDP"]
+
+    H --> I["Worker Rank 0"]
+    H --> J["Worker Rank 1"]
+
+    G --> K["Metrics & Reports"]
+    I --> K
+    J --> K
+
+    K --> L["Performance Evaluation"]
+    L --> M{"Optimization Decision"}
+
+    M --> N["ACCEPTED"]
+    M --> O["REJECTED"]
+    M --> P["INCONCLUSIVE"]
+
+    O --> Q["Rollback & Relaunch"]
+    Q --> F
+
 
 ## Technology Stack
 
