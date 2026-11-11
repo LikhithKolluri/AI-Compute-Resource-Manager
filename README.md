@@ -53,7 +53,8 @@ The system manages training jobs through a priority-based scheduler, monitors re
 ## Architecture
 
 
-```flowchart TD
+```mermaid
+flowchart TD
     A["Job Configuration (JSON)"] --> B["Job Loader"]
     B --> C["GPU Scheduler"]
 
