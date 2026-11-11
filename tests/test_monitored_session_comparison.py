@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import patch
 
-from scripts.compare_monitored_sessions import (compare_session, export_comparison_csv)
+from scripts.experiments.compare_monitored_sessions import (compare_session, export_comparison_csv)
 
 
 class MonitoredSessionComparisonTests(unittest.TestCase):
@@ -117,6 +117,7 @@ class MonitoredSessionComparisonTests(unittest.TestCase):
                 }
 
             events = [
+                event(95, "SUBMITTED"),
                 event(100, "ADMITTED"),
                 event(130, "COMPLETED"),
             ]
@@ -232,11 +233,9 @@ class MonitoredSessionComparisonTests(unittest.TestCase):
 
             self.assertFalse(output_path.exists())
 
-    def test_export_overwrites_existing_report(self):
+    def test_export_preserves_existing_sessions(self):
         with tempfile.TemporaryDirectory() as temp_dir:
-            output_path = (
-                Path(temp_dir) / "batch_comparison.csv"
-            )
+            output_path = Path(temp_dir) / "batch_comparison.csv"
 
             first_results = [
                 {"session_id": "old-session", "epochs": 3}
@@ -254,15 +253,15 @@ class MonitoredSessionComparisonTests(unittest.TestCase):
             ) as file:
                 exported_rows = list(csv.DictReader(file))
 
-            self.assertEqual(len(exported_rows), 1)
-            self.assertEqual(
-                exported_rows[0]["session_id"],
-                "new-session"
-            )
-            self.assertEqual(
-                int(exported_rows[0]["epochs"]),
-                5
-            )
+            self.assertEqual(len(exported_rows), 2)
+
+            sessions = {
+                row["session_id"]: row
+                for row in exported_rows
+            }
+
+            self.assertEqual(sessions["old-session"]["epochs"], "3")
+            self.assertEqual(sessions["new-session"]["epochs"], "5")
 
 
 if __name__ == "__main__":

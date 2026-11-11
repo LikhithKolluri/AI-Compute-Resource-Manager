@@ -24,3 +24,8 @@ outputs/
 # Windows and macOS
 Thumbs.db
 .DS_Store
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak

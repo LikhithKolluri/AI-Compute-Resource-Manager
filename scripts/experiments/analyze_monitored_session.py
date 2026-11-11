@@ -14,7 +14,7 @@ from src.reservation_advisor import recommend_vram_reservation
 def main():
     if len(sys.argv) != 2:
         raise SystemExit(
-            "Usage: python -m scripts.analyze_monitored_session "
+            "Usage: python -m scripts.experiments.analyze_monitored_session "
             "<session_id>"
         )
 

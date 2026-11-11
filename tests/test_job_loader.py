@@ -1,6 +1,6 @@
 from src.job_loader import load_jobs
 
-jobs = load_jobs("jobs.json")
+jobs = load_jobs("configs/jobs.json")
 
 print(f"Loaded {len(jobs)} jobs")
 

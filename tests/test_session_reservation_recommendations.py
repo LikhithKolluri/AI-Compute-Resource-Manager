@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.recommend_session_reservations import (
+from scripts.experiments.recommend_session_reservations import (
     recommend_from_comparison,
 )
 

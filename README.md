@@ -156,13 +156,13 @@ python -m src.train --epochs 3 --steps 100 --batch-size 512
 ### Scheduler and Managed Jobs
 
 ```powershell
-python -m src.run_jobs --config jobs.json
+python -m src.run_jobs --config configs/jobs.json
 ```
 
 ### Distributed CPU Training
 
 ```powershell
-python -m src.run_jobs --config distributed_jobs.json
+python -m src.run_jobs --config configs/distributed_jobs.json
 ```
 
 The distributed configuration uses CPU workers with the Gloo backend. It does not require multiple physical GPUs.
@@ -176,13 +176,13 @@ python -m src.distributed_launcher --workers 2 --epochs 3 --batch-size 128 --sam
 ### Rollback Integration Test
 
 ```powershell
-python -m src.test_distributed_rejection
+python -m tests.test_distributed_rejection
 ```
 
 ### Inconclusive Decision Test
 
 ```powershell
-python -m src.test_distributed_inconclusive
+python -m tests.test_distributed_inconclusive
 ```
 
 ## Performance Evaluation

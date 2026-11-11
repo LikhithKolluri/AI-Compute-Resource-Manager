@@ -11,7 +11,7 @@ from src.batch_optimizer import optimize_job_batch_size
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", default="jobs.json")
+    parser.add_argument("--config", default="configs/jobs.json")
     parser.add_argument("--test-failure", action="store_true")
     parser.add_argument("--test-shutdown", action="store_true")
     args = parser.parse_args()
@@ -220,7 +220,7 @@ def main():
             flush=True
         )
     
-    if args.config == "preemption_jobs.json":
+    if Path(args.config).name == "preemption_jobs.json":
         print("\n--- WAITING FOR TRAINING TO BEGIN ---")
         time.sleep(5)
 
