@@ -211,6 +211,14 @@ During local testing, one distributed configuration produced:
 | Measured improvement | +92.41% |
 | Decision | ACCEPTED |
 
+
+### Recorded Optimization Result
+
+![Distributed training optimization result](docs/images/distributed-optimization-result.png)
+
+*Recorded local experiment: two CPU workers, batch size increased from 128 to 256, with a measured 92.41% throughput improvement in this run.*
+
+
 These results were obtained using a synthetic workload on one local machine. They are not representative of production-scale model training and may vary between runs.
 
 ## Validation
