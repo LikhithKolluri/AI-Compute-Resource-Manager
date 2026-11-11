@@ -1,4 +1,6 @@
-torch>=2.4,<3
+# Install CUDA-enabled PyTorch separately using:
+# https://pytorch.org/get-started/locally/
+
 numpy>=1.26,<3
 nvidia-ml-py>=12.560
 psutil>=5.9,<8

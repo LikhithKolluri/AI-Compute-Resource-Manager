@@ -117,21 +117,33 @@ python -m venv .venv
 python -m pip install --upgrade pip
 ```
 
-Install the appropriate PyTorch build from:
+
+### Install PyTorch with CUDA Support
+
+This project requires a CUDA-enabled PyTorch installation for GPU training.
+
+Install the appropriate CUDA-enabled PyTorch build using the official instructions:
 
 https://pytorch.org/get-started/locally/
 
-Then install the remaining dependencies:
+**Important:** PyTorch is intentionally excluded from `requirements.txt` to avoid accidentally replacing a CUDA-enabled installation with a CPU-only build.
+
+After installing PyTorch, install the remaining dependencies:
 
 ```powershell
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
-Verify CUDA availability:
+Verify that CUDA is available:
 
 ```powershell
-python -c "import torch; print(torch.__version__); print(torch.cuda.is_available())"
+python -c "import torch; print('PyTorch:', torch.__version__); print('CUDA:', torch.version.cuda); print('CUDA available:', torch.cuda.is_available())"
 ```
+
+GPU training requires `CUDA available: True`.
+
+Distributed CPU training uses the Gloo backend and does not require CUDA.
+
 
 ## Running the Project
 
