@@ -53,7 +53,7 @@ The system manages training jobs through a priority-based scheduler, monitors re
 ## Architecture
 
 
-flowchart TD
+```flowchart TD
     A["Job Configuration (JSON)"] --> B["Job Loader"]
     B --> C["GPU Scheduler"]
 
@@ -81,7 +81,7 @@ flowchart TD
 
     O --> Q["Rollback & Relaunch"]
     Q --> F
-
+```
 
 ## Technology Stack
 
