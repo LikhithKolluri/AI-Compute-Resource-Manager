@@ -268,10 +268,80 @@ The `outputs/` directory is excluded from Git tracking by `.gitignore`.
 - Improved benchmarking with repeated trials and statistical confidence.
 - Distributed workload preemption.
 - Multi-node training support.
-- Visualization dashboards for GPU utilization, queue times, and throughput.
 
 ## Project Purpose
 
 This project was built to develop practical experience with AI infrastructure concepts, including compute resource management, scheduling, distributed execution, checkpoint recovery, performance benchmarking, and automated optimization.
 
 It is an experimental local orchestration system intended for learning and prototyping, not a production GPU cluster manager.
+
+
+
+## Phase 8 — GPU & Scheduler Observability
+
+The AI Compute Resource Manager includes a monitoring stack built with Prometheus and Grafana.
+
+### Features
+
+- Real-time NVIDIA GPU utilization and VRAM monitoring
+- Running and queued job counts
+- Logical GPU capacity reservations and availability
+- Priority-based preemption tracking
+- Historical scheduler activity and VRAM allocation graphs
+- Automatically provisioned Grafana dashboard
+
+### Start Monitoring
+
+From the project root, start Prometheus and Grafana:
+
+```powershell
+docker compose -f monitoring/compose.yaml up -d
+```
+
+Start the Python metrics exporter in a separate terminal:
+
+```powershell
+python -m src.metrics_exporter
+```
+
+### Monitoring URLs
+
+| Service | URL |
+|---|---|
+| Grafana | http://localhost:3000 |
+| Prometheus | http://localhost:9090 |
+| Python Metrics Exporter | http://localhost:8000/metrics |
+
+Grafana's dashboard is named **AI Compute Resource Manager**, located in the **AI Compute** folder.
+
+### Dashboard Provisioning
+
+The dashboard configuration is version-controlled at:
+
+`monitoring/grafana/dashboards/ai_compute_dashboard.json`
+
+Grafana provisioning configuration is located at:
+
+`monitoring/grafana/provisioning/dashboards/dashboard.yml`
+
+### Notes
+
+Scheduler metrics are published while a scheduler instance is active. Stale scheduler values may appear blank in Grafana.
+
+VRAM reservation metrics represent logical scheduler allocations, while GPU VRAM usage represents actual hardware memory consumption.
+
+
+
+### Monitoring Dashboard Screenshots
+
+#### GPU Scheduler & Preemption
+
+![GPU Scheduler Dashboard](docs/images/preemption-dashboard.png)
+
+The dashboard displays running and queued jobs, protected GPU capacity, VRAM reservations, preemption events, and scheduler activity over time.
+
+#### GPU Utilization & Memory
+
+![GPU Utilization and VRAM Monitoring](docs/images/gpu-monitoring.png)
+
+Prometheus collects NVIDIA GPU utilization and physical VRAM usage metrics, which Grafana visualizes during training workloads.

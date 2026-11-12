@@ -235,6 +235,9 @@ def main():
 
         scheduler.report()
 
+        print("\n--- KEEPING INFERENCE ACTIVE FOR MONITORING ---")
+        time.sleep(20)
+
         print("\n--- COMPLETING SIMULATED INFERENCE ---")
         scheduler.complete("critical-inference")
 

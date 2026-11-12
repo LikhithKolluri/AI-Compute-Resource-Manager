@@ -1,9 +1,14 @@
+import json
+import os
+import time
+import threading    
+from pathlib import Path
 from src.observability import EventLogger 
 from dataclasses import dataclass
 from enum import Enum
 from uuid import uuid4
 from src.workload_history import find_matching_recommendation
-
+from src.scheduler_metrics import update_scheduler_metrics
 
 class Status(str, Enum):
     QUEUED = "QUEUED"
@@ -38,6 +43,7 @@ class Job:
     workers: int = 2
     samples: int = 4096
     max_retries: int = 2
+    
 
 
 class GPUScheduler:
@@ -59,12 +65,24 @@ class GPUScheduler:
         self.protected_gb = protected_gb
         self.stop_callback = stop_callback
         self.start_callback = start_callback
+        self.preemption_count = 0
 
         self.running: list[Job] = []
         self.waiting: list[Job] = []
         self.max_start_failures = 3
         self.event_logger = EventLogger()
-
+        self._metrics_file_lock = threading.Lock()
+        
+        update_scheduler_metrics(self)
+        
+        self._heartbeat_stop = threading.Event()
+        self._heartbeat_thread = threading.Thread(
+            target=self.heartbeat_loop,
+            args=(self._heartbeat_stop,),
+            daemon=True,
+        )
+        self._heartbeat_thread.start()
+        
     @property
     def reserved_gb(self):
         return sum(job.vram_gb for job in self.running)
@@ -73,6 +91,34 @@ class GPUScheduler:
     def available_gb(self):
         return self.capacity_gb - self.reserved_gb
     
+    
+    def write_metrics_state(self):
+        state_file = (
+            Path(__file__).resolve().parent.parent
+            / "outputs"
+            / "scheduler_state.json"
+        )
+
+        state_file.parent.mkdir(parents=True, exist_ok=True)
+
+        with self._metrics_file_lock:
+            state = {
+                "updated_at": time.time(),
+                "running_jobs": len(self.running),
+                "queued_jobs": len(self.waiting),
+                "preemptions_total": self.preemption_count,
+                "reserved_vram_gb": self.reserved_gb,
+                "available_vram_gb": self.available_gb,
+                "protected_vram_gb": self.protected_gb,
+            }
+            temp_file = state_file.with_suffix(".tmp")
+
+            with temp_file.open("w", encoding="utf-8") as file:
+                json.dump(state, file)
+
+            os.replace(temp_file, state_file)
+
+    
     def log_event(self, job, event, reason=None):
         self.event_logger.log(
         job=job,
@@ -80,6 +126,8 @@ class GPUScheduler:
         reserved_gb=self.reserved_gb,
         reason=reason,
     )
+        update_scheduler_metrics(self)
+        self.write_metrics_state()
 
     def can_admit(self, job: Job) -> bool:
         # Critical jobs can use any unreserved capacity.
@@ -234,6 +282,8 @@ class GPUScheduler:
                 )
 
         self.waiting = remaining
+        update_scheduler_metrics(self)
+        self.write_metrics_state()
         
     def preempt(self, job: Job):
         if not job.preemptible:
@@ -254,7 +304,8 @@ class GPUScheduler:
         self.running.remove(job)
         job.status = Status.PAUSED
         job.borrowed_gb = 0.0
-
+        self.preemption_count += 1
+        
         self.log_event(
             job,
             "PREEMPTED",
@@ -401,6 +452,15 @@ class GPUScheduler:
 
         self.schedule()
 
+    def heartbeat_loop(self, stop_event, interval=5):
+        while not stop_event.is_set():
+            self.write_metrics_state()
+            stop_event.wait(interval)
+            
+    def stop_heartbeat(self):
+        self._heartbeat_stop.set()
+        self._heartbeat_thread.join(timeout=10)
+    
     def report(self):
         print(
             f"\nGPU reservations: "
@@ -449,3 +509,4 @@ if __name__ == "__main__":
     scheduler.complete("model-training")
 
     scheduler.report()
+    scheduler.stop_heartbeat()
